@@ -12,7 +12,7 @@
 
 - save user in the db with bycript.js pass
 
-- for google login or signin use passport.js
+#### - for google login or signin use passport.js
 
 ----------------------------------------
 
