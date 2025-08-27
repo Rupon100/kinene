@@ -1,6 +1,6 @@
 # TO-DO
 
-### register time
+### use cookie for secure and use verify token and ## axios interceptor*****
 
 - generate token -> verify token - protect route [make new veryToken for admin and seller so that admin cal see only user and seller+admin only can see their product and internal thing]
 
@@ -31,6 +31,5 @@
 
 - now create product and all feature from the requirement link
 
-### use cookie for secure and use verify token and ## axios interceptor*****
 
 #### requirement - https://www.notion.so/PROJECT-AI-GEMINI-258e4350166c80dd9db2eb63814e7128
