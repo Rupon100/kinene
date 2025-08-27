@@ -28,19 +28,19 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/blog',
-                element: <Blog></Blog>
+                element: <PrivateRoute><Blog></Blog></PrivateRoute>
             },
             {
                 path: '/about',
-                element: <About></About>
+                element: <PrivateRoute><About></About></PrivateRoute>
             },
             {
                 path: '/career',
-                element: <Career></Career>
+                element: <PrivateRoute><Career></Career></PrivateRoute>
             },
             {
                 path: '/contact',
-                element: <Contact></Contact>
+                element: <PrivateRoute><Contact></Contact></PrivateRoute>
             }
         ]
     },

@@ -5,24 +5,23 @@ import useAuth from "../AuthProvider/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logOut } = useAuth();
+  const { user, loading, logOut } = useAuth();
 
   useEffect(() => {
-
     console.log(user);
-  }, [user])
+  }, [user]);
 
   const handleClose = () => setIsOpen(false);
 
   const handleLogOut = () => {
     logOut()
-    .then(() => {
-      console.log("Logged Out!!!")
-    })
-    .catch(err => {
-      console.log(err.message)
-    })
-  }
+      .then(() => {
+        console.log("Logged Out!!!");
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   const items = [
     { path: "/", name: "Home" },
@@ -117,11 +116,11 @@ const Navbar = () => {
                   <a>Settings</a>
                 </li>
                 <li>
-                  <button onClick={handleLogOut} >Logout</button>
+                  <button onClick={handleLogOut}>Logout</button>
                 </li>
               </ul>
             </div>
-          ) : (
+          ) : loading ? (<span className="loading loading-spinner loading-sm"></span>) : (
             <Link to={"/auth/login"} className="btn">
               Login
             </Link>
