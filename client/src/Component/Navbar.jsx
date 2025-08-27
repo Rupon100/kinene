@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
+import useAuth from '../AuthProvider/useAuth'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { loading, user } = useAuth();
+
+  console.log(user);
 
   const handleClose = () => setIsOpen(false);
 
