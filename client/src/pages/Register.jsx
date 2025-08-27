@@ -1,15 +1,15 @@
 import React from "react";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../AuthProvider/useAuth";
+import SocialLogin from "../Common/SocialLogin";
 
 
 const Register = () => {
-  const {loading,
-        user,
-        createUser,
-        loginUser,
-        logOut} = useAuth();
+  const { createUser } = useAuth();
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  console.log("destination from register: ", state);
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -17,19 +17,22 @@ const Register = () => {
     const email = form.email.value;
     const pass = form.pass.value;
 
-    
-
     createUser(email, pass)
     .then((result) => {
       const user = result?.user;
       const newUser = { email, pass, uid: user?.uid }; // also add here value from user so that user can delete from firebase also from database 
-      console.log(newUser)
+      console.log(newUser);
+      navigate(state || '/')
+      form.reset();
     })
     .catch(err => {
       console.log(err.message);
     })
 
-  }      
+  };
+  
+  // social login 
+  
 
   return (
     <div className="w-full flex flex-col justify-center items-center">
@@ -46,8 +49,9 @@ const Register = () => {
          
         <button className="btn btn-neutral mt-4">Register</button>
         {/* social login here */}
-        <button type="button" className="flex items-center justify-center btn btn-neutral mt-4" ><h2>Register With Google</h2> <FcGoogle /></button>
-        <span className="text-sm mt-4" > Already Have Account? <Link className="link" to={'/auth/login'} >Login</Link></span>
+        <SocialLogin state={state} ></SocialLogin>
+
+        <span className="text-sm mt-4" > Already Have Account? <Link state={state} className="link" to={'/auth/login'} >Login</Link></span>
       </form>
     </div>
   );

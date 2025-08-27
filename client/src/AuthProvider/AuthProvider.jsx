@@ -16,21 +16,22 @@ const AuthProvider = ({ children }) => {
     }
 
     // login
-    const loginUser = (auth, email, pass) => {
+    const loginUser = (email, pass) => {
         setLoading(false);
         return signInWithEmailAndPassword(auth, email, pass);
     }
 
     // google login and signin
     const googleLogin = () => {
-        signInWithPopup(auth, provider);
+        setLoading(false);
+        return signInWithPopup(auth, provider);
     }
 
 
     // logout
     const logOut = () => {
         setLoading(false);
-        signOut(auth);
+        return signOut(auth);
     }
 
     // delete user
@@ -40,9 +41,9 @@ const AuthProvider = ({ children }) => {
     // get current user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setLoading(true);
-            setUser(currentUser?.user);
-            console.log(user);
+            setLoading(false);
+            setUser(currentUser);
+            console.log(currentUser);
         });
         return () => unsubscribe();
     }, [])

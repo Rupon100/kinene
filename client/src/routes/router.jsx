@@ -5,6 +5,12 @@ import Error from "../pages/Error";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import AuthLayout from "../Layout/AuthLayout";
+import Shop from "../pages/Shop";
+import Blog from "../pages/Blog";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
+import Career from "../pages/Career";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
     {
@@ -16,7 +22,26 @@ export const router = createBrowserRouter([
                 index: true,
                 element: <Home></Home>
             },
-           
+            {
+                path: '/shop',
+                element: <PrivateRoute><Shop></Shop></PrivateRoute>
+            },
+            {
+                path: '/blog',
+                element: <Blog></Blog>
+            },
+            {
+                path: '/about',
+                element: <About></About>
+            },
+            {
+                path: '/career',
+                element: <Career></Career>
+            },
+            {
+                path: '/contact',
+                element: <Contact></Contact>
+            }
         ]
     },
     {

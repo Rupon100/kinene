@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
-import useAuth from '../AuthProvider/useAuth'
+import useAuth from "../AuthProvider/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { loading, user } = useAuth();
+  const { user, logOut } = useAuth();
 
-  console.log(user);
+  useEffect(() => {
+
+    console.log(user);
+  }, [user])
 
   const handleClose = () => setIsOpen(false);
+
+  const handleLogOut = () => {
+    logOut()
+    .then(() => {
+      console.log("Logged Out!!!")
+    })
+    .catch(err => {
+      console.log(err.message)
+    })
+  }
 
   const items = [
     { path: "/", name: "Home" },
@@ -52,7 +65,11 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {/* Cart Icon */}
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle"
+            >
               <div className="indicator">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -72,46 +89,43 @@ const Navbar = () => {
               </div>
             </div>
           </div>
-          {/* <div
-    tabIndex={0}
-    className="dropdown-content card card-compact w-52 p-2 shadow bg-base-100 mt-3"
-  >
-    <div className="card-body">
-      <span className="font-bold text-lg">8 Items</span>
-      <span className="text-info">Subtotal: $999</span>
-      <div className="card-actions">
-        <button className="btn btn-primary btn-block">View cart</button>
-      </div>
-    </div>
-  </div>
-  */}
 
-  
-
-
-          {/* Profile */}
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
-                <img
-                  alt="Avatar"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                />
+          {user ? (
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle avatar"
+              >
+                <div className="w-10 rounded-full">
+                  <img
+                    alt="Avatar"
+                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  />
+                </div>
               </div>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
+              >
+                <li>
+                  <a className="justify-between">
+                    Profile <span className="badge">New</span>
+                  </a>
+                </li>
+                <li>
+                  <a>Settings</a>
+                </li>
+                <li>
+                  <button onClick={handleLogOut} >Logout</button>
+                </li>
+              </ul>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
-            >
-              <li>
-                <a className="justify-between">
-                  Profile <span className="badge">New</span>
-                </a>
-              </li>
-              <li><a>Settings</a></li>
-              <li><a>Logout</a></li>
-            </ul>
-          </div>
+          ) : (
+            <Link to={"/auth/login"} className="btn">
+              Login
+            </Link>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -120,16 +134,16 @@ const Navbar = () => {
           >
             {isOpen ? <FiX /> : <FiMenu />}
           </button>
-
-          {/* toggle with if user has or not also with profile */}
-          <Link to={'/auth/login'} className="btn" >Login</Link>
-
         </div>
 
         {/* Mobile Dropdown (Nav links only) */}
         <div
           className={`absolute left-0 w-full bg-white flex flex-col items-center gap-4 py-6 transition-all duration-300 ease-in-out z-10 md:hidden
-            ${isOpen ? "top-16 opacity-100 pointer-events-auto" : "-top-96 opacity-0 pointer-events-none"}
+            ${
+              isOpen
+                ? "top-16 opacity-100 pointer-events-auto"
+                : "-top-96 opacity-0 pointer-events-none"
+            }
           `}
         >
           {items.map((item, i) => (
