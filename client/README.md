@@ -1,12 +1,15 @@
-# React + Vite
+# TO-DO
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### register time
+- ask if user want to register as normal user or seller, if seller than set a role, if not then normal user, 
+- or signup using normal user then from the profile ask to admin for seller
 
-Currently, two official plugins are available:
+- for private router make everything ok (base on user)
+- after login redirect him into the desire router or page
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- save user in the db with bycript.js pass
+- for google login or signin use passport.js
 
-## Expanding the ESLint configuration
+### use cookie for secure and use verify token and ## axios interceptor*****
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+#### requirement - https://www.notion.so/PROJECT-AI-GEMINI-258e4350166c80dd9db2eb63814e7128
