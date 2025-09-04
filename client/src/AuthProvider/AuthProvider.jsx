@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AuthContext from "./ContextCreate";
 import { auth } from "../Firebase/firebase.init";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import axios from "axios";
 
  
 const AuthProvider = ({ children }) => {
@@ -40,13 +41,19 @@ const AuthProvider = ({ children }) => {
 
     // get current user
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setLoading(false);
+        const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
             setUser(currentUser);
-            console.log(currentUser);
+            console.log(currentUser?.email);
+            try{
+                const res = await axios.post(`http://localhost:4080/jwt`, { email: user?.email }, { withCredentials: true });
+                console.log('jwt token: ', res?.data);
+            }catch(err){
+                console.log("JWT fetch error: ", err);
+            }
+            setLoading(false);
         });
         return () => unsubscribe();
-    }, [])
+    }, [user?.email])
 
     // base on user make toggle avatar anf login button in the navbar 
 

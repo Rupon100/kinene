@@ -2,13 +2,18 @@
 
 ### use cookie for secure and use verify token and ## axios interceptor*****
 
-- generate token -> verify token - protect route [make new veryToken for admin and seller so that admin cal see only user and seller+admin only can see their product and internal thing]
+- generate token -> verify token 
+- protect route [make new veryToken for admin and seller so that admin can see only user and seller+admin only can see their product and internal thing]
+- login time add a value as customer
 
-- jwt + bcrypt login / register
+- role based verify token + doo axios interceptor for force user if 401, 402,403
+https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
 
-- registered user must save the information in DB
+- use passport js for social login
 
-- save the user in the DB, when login find the user using email -> compare the password then give access
+- framer motion
+
+- add more technology that i can
 
 
 #### - for google login or signin use passport.js + Oath2

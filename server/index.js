@@ -1,11 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  methods: ['POST', 'DELETE', 'UPDATE', 'PATCH', 'GET'],
+  credentials: true
+}));
 require("dotenv").config();
 
 const port = process.env.PORT || 4080;
@@ -21,6 +28,22 @@ const client = new MongoClient(uri, {
   },
 });
 
+
+// verify token here
+const verifyToken = (req, res, next) => {
+  const token = req.cookies.token;
+  if(!token) return res.status(401).send({message: "Unauthorized"})
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if(err){
+      return res.status(401).send({message: "Invalid token!"});
+    }
+    req.user = decoded;
+    next()
+  })  
+}
+
+
 async function run() {
   try {
     // (optional starting in v4.7)
@@ -30,6 +53,28 @@ async function run() {
     const usersCollection = client.db("Kinene").collection("users");
 
     //--------------------------------user auth------------------------------
+    // make token for user auth
+    app.post('/jwt', async(req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '2h' })
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: false, // production will be true
+        sameSite: 'lax', // for safe from CSRF attack || strict-(best) for use same url backend and front end || none
+      })
+      res.send(token);
+    })
+
+    // user logOut clear cookie
+    app.post('/logout', async(req, res) => {
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax'
+      })
+      res.status(200).send({message: "Logout successful!"})
+    })
+
     // user register
     app.post("/register", async (req, res) => {
       const { email, pass, uid } = req.body;
@@ -39,11 +84,7 @@ async function run() {
 
       console.log(hashedPass);
       const user = { email, pass: hashedPass, uid };
-
-      // // check if already has in the db
-      // const isExist = await usersCollection.findOne({email});
-      // console.log("User exist or not", isExist)
-
+ 
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });

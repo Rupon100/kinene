@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
 import useAuth from "../AuthProvider/useAuth";
+import axios from "axios";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,14 +14,23 @@ const Navbar = () => {
 
   const handleClose = () => setIsOpen(false);
 
-  const handleLogOut = () => {
-    logOut()
-      .then(() => {
-        console.log("Logged Out!!!");
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+  const handleLogOut = async() => {
+    try {
+
+      const res = await axios.post(`http://localhost:4080/logout`, {}, {withCredentials: true});
+      console.log(res.data)
+
+      logOut()
+        .then(() => {
+          console.log("Logged Out!!!");
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+
+    } catch (err) {
+      console.log("Logout token error!");
+    }
   };
 
   const items = [
@@ -120,7 +130,9 @@ const Navbar = () => {
                 </li>
               </ul>
             </div>
-          ) : loading ? (<span className="loading loading-spinner loading-sm"></span>) : (
+          ) : loading ? (
+            <span className="loading loading-spinner loading-sm"></span>
+          ) : (
             <Link to={"/auth/login"} className="btn">
               Login
             </Link>

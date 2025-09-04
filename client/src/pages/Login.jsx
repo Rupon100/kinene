@@ -12,34 +12,6 @@ const Login = () => {
   const { state } = useLocation();
   console.log("destination from login: ", state);
 
-  // const handleLogin = (e) => {
-  //   e.preventDefault();
-  //   const form = e.target;
-  //   const email = form.email.value;
-  //   const pass = form.pass.value;
-  //   const user = { email, pass };
-
-  //   console.log(user);
-
-  //   loginUser(email, pass)
-  //   .then((currentUser) => {
-  //     console.log(currentUser);
-
-  //     axios.post(`http://localhost:4080/login`, {email,pass})
-  //     .then(res => {
-  //       console.log(res.data);
-  //       toast.success(res?.data?.message);
-  //     })
-    
-  //     form.reset();
-  //     navigate(state || '/');
-  //   })
-  //   .catch(err => {
-  //     toast.error("Auth invalid!");
-  //     console.log(err);
-  //   })
-  // }
-  
   const handleLogin = async (e) => {
   e.preventDefault();
   const form = e.target;
