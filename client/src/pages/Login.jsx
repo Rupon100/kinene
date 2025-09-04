@@ -3,6 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from '../AuthProvider/useAuth'
 import SocialLogin from "../Common/SocialLogin";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const { loginUser } = useAuth();
@@ -10,25 +12,59 @@ const Login = () => {
   const { state } = useLocation();
   console.log("destination from login: ", state);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const email = form.email.value;
-    const pass = form.pass.value;
-    const user = { email, pass };
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   const form = e.target;
+  //   const email = form.email.value;
+  //   const pass = form.pass.value;
+  //   const user = { email, pass };
 
-    console.log(user);
+  //   console.log(user);
 
-    loginUser(email, pass)
-    .then((currentUser) => {
-      console.log(currentUser);
-      form.reset();
-      navigate(state || '/');
-    })
-    .catch(err => {
-      console.log(err);
-    })
+  //   loginUser(email, pass)
+  //   .then((currentUser) => {
+  //     console.log(currentUser);
+
+  //     axios.post(`http://localhost:4080/login`, {email,pass})
+  //     .then(res => {
+  //       console.log(res.data);
+  //       toast.success(res?.data?.message);
+  //     })
+    
+  //     form.reset();
+  //     navigate(state || '/');
+  //   })
+  //   .catch(err => {
+  //     toast.error("Auth invalid!");
+  //     console.log(err);
+  //   })
+  // }
+  
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.email.value;
+  const pass = form.pass.value;
+
+  try {
+    // 1️⃣ Check backend first
+    const res = await axios.post('http://localhost:4080/login', { email, pass });
+    console.log('Backend login success:', res.data);
+    toast.success(res.data.message);
+
+    const currentUser = await loginUser(email, pass); 
+    console.log('Firebase login:', currentUser);
+
+
+    form.reset();
+    navigate(state || '/');
+
+  } catch (err) {
+    console.error('Login failed:', err);
+    toast.error(err.response?.data?.message || 'Login failed!');
   }
+};
+
 
   return (
     <div className="w-full flex flex-col justify-center items-center">

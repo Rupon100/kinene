@@ -10,9 +10,8 @@
 
 - save the user in the DB, when login find the user using email -> compare the password then give access
 
-- save user in the db with bycript.js pass
 
-#### - for google login or signin use passport.js
+#### - for google login or signin use passport.js + Oath2
 
 ----------------------------------------
 

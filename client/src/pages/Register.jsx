@@ -3,7 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../AuthProvider/useAuth";
 import SocialLogin from "../Common/SocialLogin";
-
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const Register = () => {
   const { createUser } = useAuth();
@@ -11,7 +12,7 @@ const Register = () => {
   const navigate = useNavigate();
   console.log("destination from register: ", state);
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
@@ -22,16 +23,29 @@ const Register = () => {
       const user = result?.user;
       const newUser = { email, pass, uid: user?.uid }; // also add here value from user so that user can delete from firebase also from database 
       console.log(newUser);
+
+      axios.post(`http://localhost:4080/register`, newUser)
+      .then(res => {
+        console.log(res?.data);
+        if(res?.data?.insertedId){
+          return toast.success("User Created!");
+        }
+      })
+      .catch(err => { 
+        toast.error("Something wrong!!");
+        console.log('backend error: ', err.message)
+       })
+
       navigate(state || '/')
       form.reset();
     })
     .catch(err => {
+      toast.error(err.message);
       console.log(err.message);
     })
 
   };
   
-  // social login 
   
 
   return (
