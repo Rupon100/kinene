@@ -44,11 +44,15 @@ const AuthProvider = ({ children }) => {
         const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
             setUser(currentUser);
             console.log(currentUser?.email);
-            try{
-                const res = await axios.post(`http://localhost:4080/jwt`, { email: user?.email }, { withCredentials: true });
-                console.log('jwt token: ', res?.data);
-            }catch(err){
-                console.log("JWT fetch error: ", err);
+            console.log(user?.email);
+            if(currentUser){
+
+                try{
+                    const res = await axios.post(`http://localhost:4080/jwt`, { email: currentUser?.email }, { withCredentials: true });
+                    console.log('jwt token: ', res?.data);
+                }catch(err){
+                    console.log("JWT fetch error: ", err);
+                }
             }
             setLoading(false);
         });

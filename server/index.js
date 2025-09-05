@@ -31,18 +31,37 @@ const client = new MongoClient(uri, {
 
 // verify token here
 const verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies?.token;
   if(!token) return res.status(401).send({message: "Unauthorized"})
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if(err){
       return res.status(401).send({message: "Invalid token!"});
     }
-    req.user = decoded;
-    next()
+    req.user = decoded; // decoded from here
+    next();
   })  
 }
 
+// not decoded everywhere because token verify already decoded the user
+
+// verify customer
+const verifyUser = (req, res, next) => {
+  if(!req.user) return res.status(401).send({message: "Unauthorized"});
+  if(req.user.role !== 'customer' && req.user.role !== "admin") return res.status(403).send({message: "Forbidden Access"});
+}
+
+// verify seller
+const verifyCustomer = (req, res, next) => {
+  if(!req.user) return res.status(401).send({message: "Unauthorized"});
+  if(req.user.role !== 'seller' && req.user.role !== "admin") return res.status(403).send({message: "Forbidden Access"});
+} 
+
+// verify Admin
+const verifyAdmin = (req, res, next) => {
+  if(!req.user) return res.status(401).send({message: "Unauthorized"});
+  if(req.user.role !== 'admin') return res.status(403).send({message: "Forbidden Access"})
+}
 
 async function run() {
   try {
@@ -56,11 +75,17 @@ async function run() {
     // make token for user auth
     app.post('/jwt', async(req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '2h' })
+      console.log("Token create for: ", user);
+
+      const foundUserForType = await usersCollection.findOne(user);
+      console.log("Find the user from collection fot fet the type: ", foundUserForType);
+
+      const type = foundUserForType?.type || 'customer';
+
+      const token = jwt.sign({user, type}, process.env.JWT_SECRET, { expiresIn: '2h' })
       res.cookie('token', token, {
         httpOnly: true,
         secure: false, // production will be true
-        sameSite: 'lax', // for safe from CSRF attack || strict-(best) for use same url backend and front end || none
       })
       res.send(token);
     })
@@ -70,20 +95,19 @@ async function run() {
       res.clearCookie('token', {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax'
       })
       res.status(200).send({message: "Logout successful!"})
     })
 
     // user register
     app.post("/register", async (req, res) => {
-      const { email, pass, uid } = req.body;
+      const { email, pass, uid, type } = req.body;
 
       const saltRounds = 10;
       const hashedPass = await bcrypt.hash(pass, saltRounds);
 
       console.log(hashedPass);
-      const user = { email, pass: hashedPass, uid };
+      const user = { email, pass: hashedPass, uid, type };
  
       const result = await usersCollection.insertOne(user);
       res.send(result);
@@ -116,6 +140,28 @@ async function run() {
         res.status(400).send("Server error!");
       }
     });
+
+
+    //-------------------------------blog related apis---------------------
+
+    // blog api --- verifyToken + user type
+    app.get('/blog/:email', verifyToken, async(req, res) => {
+      const email = req.params.email;
+      const decodedUser = req.user;
+
+      console.log("Decoded User: ", decodedUser); // email: decodedUser?.user?.email  && type: decodedUser?.type
+      console.log('user email: ', email);
+
+      if(decodedUser?.user?.email !== email && decodedUser?.type !== "customer"){
+        res.send("err from blog check!")
+        return res.status(403).send({message: "Forbidden Access"});
+      }
+
+      res.status(200).send({message: "this is blog, check if it working well or not!"});
+    })
+
+
+
 
     app.get("/", (req, res) => {
       res.send({ Message: "everything ok!" });

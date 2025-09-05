@@ -21,7 +21,7 @@ const Register = () => {
     createUser(email, pass)
     .then((result) => {
       const user = result?.user;
-      const newUser = { email, pass, uid: user?.uid }; // also add here value from user so that user can delete from firebase also from database 
+      const newUser = { email, pass, uid: user?.uid, type: 'customer' }; // also add here value from user so that user can delete from firebase also from database 
       console.log(newUser);
 
       axios.post(`http://localhost:4080/register`, newUser)

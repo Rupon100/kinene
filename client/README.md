@@ -2,14 +2,15 @@
 
 ### use cookie for secure and use verify token and ## axios interceptor*****
 
-- generate token -> verify token 
-- protect route [make new veryToken for admin and seller so that admin can see only user and seller+admin only can see their product and internal thing]
-- login time add a value as customer
-
-- role based verify token + doo axios interceptor for force user if 401, 402,403
-https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
+- verify token for customer(1) + seller + admin
+ 
+### axios interceptor for force user logOut if 401, 402,403
 
 - use passport js for social login
+
+- use delete user from firebase -> db
+
+https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
 
 - framer motion
 
