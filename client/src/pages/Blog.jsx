@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
-import axios from 'axios';
 import useAuth from '../AuthProvider/useAuth';
+import useAxiosSecure from '../Services/useAxiosSecure';
 
 const Blog = () => {
     const { user } = useAuth();
+    const axiosSecure = useAxiosSecure();
+     
     useEffect(() => {
         const fetchData = async() => {
-            await axios.get(`http://localhost:4080/blog/${user?.email}`, {withCredentials: true})
+            await axiosSecure.get(`blog/${user?.email}`, {withCredentials: true})
             .then(res => {
                 console.log(res.data);
             })
