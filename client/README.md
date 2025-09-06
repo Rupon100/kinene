@@ -1,6 +1,6 @@
 # TO-DO
 
-### use cookie for secure and use verify token and ## axios interceptor*****
+## axios interceptor*****
 
 - verify token for customer(1) + seller + admin
  
@@ -9,6 +9,8 @@
 - use passport js for social login
 
 - use delete user from firebase -> db
+
+- see the requirement pdf + design link
 
 https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
 
@@ -20,8 +22,6 @@ https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
 #### - for google login or signin use passport.js + Oath2
 
 ----------------------------------------
-
-- after signup using normal user then from the profile ask to admin for seller(need application email or normally)
 
 - On profile page, add a “Request Seller Account” button.
 

@@ -6,8 +6,14 @@ const Blog = () => {
     const { user } = useAuth();
     useEffect(() => {
         const fetchData = async() => {
-            const res = await axios.get(`http://localhost:4080/blog/${user?.email}`, {withCredentials: true});
-            console.log(res.data);
+            await axios.get(`http://localhost:4080/blog/${user?.email}`, {withCredentials: true})
+            .then(res => {
+                console.log(res.data);
+            })
+            .catch(err => {
+                console.log(err)
+            })
+            
         }
         fetchData();
     }, [user?.email])

@@ -46,15 +46,21 @@ const verifyToken = (req, res, next) => {
 // not decoded everywhere because token verify already decoded the user
 
 // verify customer
-const verifyUser = (req, res, next) => {
+const verifyCustomer = (req, res, next) => {
   if(!req.user) return res.status(401).send({message: "Unauthorized"});
-  if(req.user.role !== 'customer' && req.user.role !== "admin") return res.status(403).send({message: "Forbidden Access"});
+  if(req.user.type !== 'customer' && req.user.type !== "admin") {
+    return res.status(403).send({message: "Forbidden Access"})
+  };
+  next();
 }
 
 // verify seller
-const verifyCustomer = (req, res, next) => {
+const verifySeller = (req, res, next) => {
   if(!req.user) return res.status(401).send({message: "Unauthorized"});
-  if(req.user.role !== 'seller' && req.user.role !== "admin") return res.status(403).send({message: "Forbidden Access"});
+  if(req.user.role !== 'seller' && req.user.role !== "admin") {
+    return res.status(403).send({message: "Forbidden Access"})
+  };
+  next();
 } 
 
 // verify Admin
@@ -145,7 +151,7 @@ async function run() {
     //-------------------------------blog related apis---------------------
 
     // blog api --- verifyToken + user type
-    app.get('/blog/:email', verifyToken, async(req, res) => {
+    app.get('/blog/:email', verifyToken, verifyCustomer, async(req, res) => {
       const email = req.params.email;
       const decodedUser = req.user;
 
