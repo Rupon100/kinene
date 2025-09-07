@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
+const { sendWelcomeEmail } = require('./emailService')
+
 const app = express();
 
 app.use(express.json());
@@ -96,6 +98,28 @@ async function run() {
       res.send(token);
     })
 
+    // social login save data
+    app.post('/auth-google', async(req, res) => {
+      const { email, uid, name } = req.body;
+
+      let user = await usersCollection.findOne({email})
+      if(!user){
+        user = { email, uid, name, type: "customer", authProvider: "Google" }
+        await usersCollection.insertOne(user);
+
+        try{
+          const result = await sendWelcomeEmail(email);
+          console.log("WelCome Email result: ", result);
+        }catch(err){
+          console.log("Server email error: ", err.message);
+        }
+
+      }
+
+      res.status(200).send({ message: "Google Auth Successful!" });
+
+    })
+
     // user logOut clear cookie
     app.post('/logout', async(req, res) => {
       res.clearCookie('token', {
@@ -147,6 +171,7 @@ async function run() {
       }
     });
 
+  
 
     //-------------------------------blog related apis---------------------
 
