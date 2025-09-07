@@ -1,14 +1,20 @@
 # TO-DO
 
-## axios interceptor*****
+# revision all at first
+
+### add for social login security like email/pass
 
 - verify token for customer(1) + seller + admin
  
-### axios interceptor for force user logOut if 401, 402,403
+- // use passport js for social login ** if security is good
 
-- use passport js for social login
 
-- use delete user from firebase -> db
+
+
+- send email for successfully logged in 
+
+
+- *********************RBAC - (Role-Based Access Control)******************
 
 - see the requirement pdf + design link
 
@@ -28,13 +34,23 @@ https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
 - When clicked, notify admin → admin approves → update role in database.
 
 - You can also display “Seller Pending” status on the dashboard.
-
-- for private router make everything ok (base on user)
-
+ 
 
 ------------------------------------------
 
-- now create product and all feature from the requirement link
-
 
 #### requirement - https://www.notion.so/PROJECT-AI-GEMINI-258e4350166c80dd9db2eb63814e7128
+
+
+### Deployment & DevOps
+Docker basics (containerize frontend + backend)
+GitHub Actions (CI/CD automation)
+Cloud hosting:
+- Frontend → Vercel / Netlify
+- Backend → Render / Railway / AWS / Heroku
+
+
+### Testing
+- Unit testing → Jest
+- API testing → Supertest with Express
+- E2E testing → Cypress / Playwright
