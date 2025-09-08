@@ -46,8 +46,6 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-// not decoded everywhere because token verify already decoded the user
-
 // verify customer
 const verifyCustomer = (req, res, next) => {
   if (!req.user) return res.status(401).send({ message: "Unauthorized" });
@@ -189,6 +187,12 @@ async function run() {
       }
     });
 
+    // get user for role
+    app.get('/users/:email', async(req, res) => {
+      const result = await usersCollection.findOne({email: req.params.email});
+      res.send(result);
+    })
+
     //-------------------------------blog related apis---------------------
 
     // blog api --- verifyToken + user type
@@ -211,6 +215,11 @@ async function run() {
         .status(200)
         .send({ message: "this is blog, check if it working well or not!" });
     });
+
+
+
+
+
 
     app.get("/", (req, res) => {
       res.send({ Message: "everything ok!" });

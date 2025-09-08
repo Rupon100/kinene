@@ -31,12 +31,12 @@ const sendMail = (to, title, body) => {
 // specific email helpers for welcome email
 const sendWelcomeEmail = (to) => {
   const body = `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;" >
-                    <h2>Welcome to our App 🎉.</h2> 
-                    <p>Hi there,</p> 
-                    <p>Thanks for joining us! We’re excited to have you onboard.</p>
-                    <p>Stay tuned for upcoming features and updates.</p> 
-                    <br>
-                    <p>Team Kinene</p>
+                  <h2>Welcome to our App 🎉.</h2> 
+                  <p>Hi there,</p> 
+                  <p>Thanks for joining us! We’re excited to have you onboard.</p>
+                  <p>Stay tuned for upcoming features and updates.</p> 
+                  <br>
+                  <p>Team Kinene</p>
                 </div>`;
   return sendMail(to, "Welcome to our App!", body);
 };
