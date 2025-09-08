@@ -1,4 +1,4 @@
- import axios from 'axios';
+import axios from 'axios';
 import React, { useEffect } from 'react';
 import useAuth from '../AuthProvider/useAuth';
 import { useNavigate } from 'react-router';

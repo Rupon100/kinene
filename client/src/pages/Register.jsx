@@ -28,6 +28,7 @@ const Register = () => {
       .then(res => {
         console.log(res?.data);
         if(res?.data?.insertedId){
+          navigate(state || '/')
           return toast.success("User Created!");
         }
       })
@@ -36,7 +37,6 @@ const Register = () => {
         console.log('backend error: ', err.message)
        })
 
-      navigate(state || '/')
       form.reset();
     })
     .catch(err => {

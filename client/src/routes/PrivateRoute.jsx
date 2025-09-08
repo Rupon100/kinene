@@ -1,24 +1,30 @@
 import React from 'react';
-import useAuth from '../AuthProvider/useAuth';
 import { Navigate, useLocation } from 'react-router';
-// import WholeSpiner from '../Common/WholeSpiner';
-
-const PrivateRoute = ({children}) => {
-    const { user, loading } = useAuth();
+import useAuth from '../AuthProvider/useAuth';
+import useRole from '../Hooks/useRole';
+ 
+const PrivateRoute = ({children, requiredRole}) => {
+    const { user, loading: authLoading } = useAuth();
+    const { role, loading: roleLoading } = useRole();
     const location = useLocation();
-    console.log("location from private Route: ", location?.pathname);
 
-    // console.log(location)
+    
+    if(authLoading || roleLoading){
+        return <h2>loading.....</h2>;
+    }
+    
 
-    if(user){
-        return children;
+    if(!user){
+        return <Navigate to={'/auth/login'} state={location?.pathname} replace ></Navigate>;
     }
 
-    if(loading){
-        return <h2>spining</h2>;
-    }
+    if(requiredRole && requiredRole !== role) return <Navigate to={'/'} replace ></Navigate>
 
-    return <Navigate to={'/auth/login'} state={location?.pathname} replace ></Navigate>
+    return children;
 };
 
 export default PrivateRoute;
+
+
+
+ 

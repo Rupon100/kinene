@@ -3,12 +3,12 @@ import AuthContext from "./ContextCreate";
 import { auth } from "../Firebase/firebase.init";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import axios from "axios";
-
  
 const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const provider = new GoogleAuthProvider();
+    // const axiosSecure = useAxiosSecure();
 
     // create user
     const createUser = (email, pass) => {
@@ -42,22 +42,26 @@ const AuthProvider = ({ children }) => {
     // get current user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
-            setUser(currentUser);
             console.log(currentUser?.email);
-            console.log(user?.email);
-            if(currentUser?.email){
+            
+            setUser(currentUser);
 
+            if(currentUser?.email){
+                
                 try{
+                    // post user to DB
                     const res = await axios.post(`http://localhost:4080/jwt`, { email: currentUser?.email }, { withCredentials: true });
                     console.log('jwt token: ', res?.data);
+
                 }catch(err){
                     console.log("JWT fetch error: ", err);
                 }
             }
             setLoading(false);
         });
+
         return () => unsubscribe();
-    }, [user?.email])
+    }, [])
 
     // base on user make toggle avatar anf login button in the navbar 
 

@@ -1,24 +1,17 @@
 # TO-DO
 
-# revision all at first
 
-### add for social login security like email/pass
+
+
+# revision all at first
 
 - verify token for customer(1) + seller + admin
  
-- // use passport js for social login ** if security is good
-
-
-
-
-- send email for successfully logged in 
-
 
 - *********************RBAC - (Role-Based Access Control)******************
 
-- see the requirement pdf + design link
 
-https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
+- see the requirement pdf + design link
 
 - framer motion
 
@@ -34,6 +27,8 @@ https://chatgpt.com/c/68b9a42f-a034-8333-8f51-a05c7961d195
 - When clicked, notify admin → admin approves → update role in database.
 
 - You can also display “Seller Pending” status on the dashboard.
+
+- send email for buying && request to seller
  
 
 ------------------------------------------

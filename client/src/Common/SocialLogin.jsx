@@ -16,7 +16,7 @@ const SocialLogin = ({ state }) => {
 
       console.log("Google login User: ", user);
       
-      axiosSecure.post('/auth-google', {
+      await axiosSecure.post('/auth-google', {
         email: user?.email,
         uid: user?.uid,
         name: user?.displayName
