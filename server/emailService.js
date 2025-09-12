@@ -13,9 +13,9 @@ const transporter = nodemailer.createTransport({
 });
 
 // send mail function
-const sendMail = (to, title, body) => {
+const sendMail = async(to, title, body) => {
   try {
-    const info = transporter.sendMail({
+    const info = await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: to,
       subject: title,
@@ -41,9 +41,29 @@ const sendWelcomeEmail = (to) => {
   return sendMail(to, "Welcome to our App!", body);
 };
 
+// send email to admin for become a seller
+const WantSellerEmail = (to, customerName, customerEmail, storeName, mobile, location, message ) => {
+  const body = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <h2>New Seller Request!!</h2>
+      <p><strong>Customer Name:</strong> ${customerName}</p>
+      <p><strong>Customer Email:</strong> ${customerEmail}</p>
+      <p><strong>Store Name:</strong> ${storeName}</p>
+      <p><strong>Mobile:</strong> ${mobile}</p>
+      <p><strong>Location:</strong> ${location}</p>
+      <p><strong>Message:</strong> ${message}</p>
+      <br>
+      <p>Check the admin dashboard for further actions.</p>
+    </div>
+  `
+  return sendMail(to, "New Seller Request!", body);
+}
+
+// add this email to server code the fardiislamrupon@gmial.com is middle man like send user and send to admin to(ruponmia@gmail.com)
+WantSellerEmail("ruponmia97@gmail.com", "sidka", "sidkaalex@gmail.com", "Kannu", "01992992", "Moholgiri", "please approve me to become a seller");
+
 // product purchase
 
-// email send to admin for seller || admin to seller that upgraded
 
 // sendWelcomeEmail("sidlex@gmail.com");
 // export { sendWelcomeEmail };

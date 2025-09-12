@@ -12,26 +12,26 @@ const AuthProvider = ({ children }) => {
 
     // create user
     const createUser = (email, pass) => {
-        setLoading(false);
+        setLoading(true);
         return createUserWithEmailAndPassword(auth, email, pass);
     }
 
     // login
     const loginUser = (email, pass) => {
-        setLoading(false);
+        setLoading(true);
         return signInWithEmailAndPassword(auth, email, pass);
     }
 
     // google login and signin
     const googleLogin = () => {
-        setLoading(false);
+        setLoading(true);
         return signInWithPopup(auth, provider);
     }
 
 
     // logout
     const logOut = () => {
-        setLoading(false);
+        setLoading(true);
         return signOut(auth);
     }
 
@@ -42,12 +42,9 @@ const AuthProvider = ({ children }) => {
     // get current user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
-            console.log(currentUser?.email);
-            
             setUser(currentUser);
 
             if(currentUser?.email){
-                
                 try{
                     // post user to DB
                     const res = await axios.post(`http://localhost:4080/jwt`, { email: currentUser?.email }, { withCredentials: true });

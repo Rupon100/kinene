@@ -3,7 +3,11 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const cloudinary = require("./cloudinary");
+const multer = require("multer");
+const streamifier = require("streamifier");
 
+// import nodemailer email send
 const { sendWelcomeEmail } = require("./emailService");
 
 const app = express();
@@ -13,7 +17,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: ["http://localhost:5173"],
-    methods: ["POST", "DELETE", "UPDATE", "PATCH", "GET"],
+    methods: ["POST", "DELETE", "UPDATE", "PATCH", "GET", "PUT"],
     credentials: true,
   })
 );
@@ -21,6 +25,11 @@ require("dotenv").config();
 
 const port = process.env.PORT || 4080;
 
+//-------------------------multer + cloudinary setup---------------------
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+//------------------------------mongodb-------------------------
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nnefkr8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -78,6 +87,7 @@ async function run() {
 
     // db and collection
     const usersCollection = client.db("Kinene").collection("users");
+    const sellersCollection = client.db("Kinene").collection("sellers");
 
     //--------------------------------user auth------------------------------
     // make token for user auth
@@ -147,15 +157,14 @@ async function run() {
         // insert data into db
         const result = await usersCollection.insertOne(user);
 
-        sendWelcomeEmail(email)
-        .catch(err => {
-         console.log("Welcome regi.. error: ", err.message);
-        })
+        sendWelcomeEmail(email).catch((err) => {
+          console.log("Welcome regi.. error: ", err.message);
+        });
 
         res.send(result);
       } catch (err) {
         console.log(err.message);
-        res.status(500).send({message: "Registration stored data failed!"});
+        res.status(500).send({ message: "Registration stored data failed!" });
       }
     });
 
@@ -188,15 +197,115 @@ async function run() {
     });
 
     // get user for role
-    app.get('/users/:email', async(req, res) => {
+    app.get("/users/:email", async (req, res) => {
+      const result = await usersCollection.findOne({ email: req.params.email });
+      res.send(result);
+    });
+
+    //-------------------------------profile information edit--------------------
+    // get a user information
+    app.get('/db-user/:email', verifyToken, async(req, res) => {
       const result = await usersCollection.findOne({email: req.params.email});
       res.send(result);
     })
 
+    // user address
+    app.put('/user/address/:email', verifyToken, verifyCustomer, async(req, res) => {
+      const email = { email: req.params.email };
+      const { address } = req.body;
+      const updateDoc = { 
+        $set: { address }
+      }
+      const result = await usersCollection.updateOne(email, updateDoc);
+      res.send(result);
+    })
+
+    // helper function must return a promise
+    const uploadFormBuffer = (buffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "profiles", overwrite: true }, // ✅ overwrite fixed spelling
+          (err, result) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+        streamifier.createReadStream(buffer).pipe(stream);
+      });
+    };
+
+    // upload image in cloudinary + save in
+    app.post(
+      "/profile-image/:email",
+      verifyToken,
+      verifyCustomer,
+      upload.single("image"),
+      async (req, res) => {
+        const email = req.params.email;
+        console.log(`Uploaded email: ${email} || image data: `, req.file);
+
+        try {
+          const result = await uploadFormBuffer(req.file.buffer);
+
+          // save the URL in DB for later usage
+          await usersCollection.updateOne(
+            { email },
+            { $set: { profileImage: result.secure_url, profileImageId: result?.public_is } }
+          );
+
+          res.send(result);
+        } catch (err) {
+          console.log("Upload error: ", err.message);
+          res.status(500).send({ message: "Image upload failed!" });
+        }
+      }
+    );
+    // patch for the profile
+
+    // get the profile image
+    app.get('/users/:email', verifyToken, verifyCustomer, async(req, res) => {
+      const email = req.params.email;
+      const user = await usersCollection.findOne({ email });
+      res.send(user);
+    })
+
+    // change profile username
+    app.patch('/profile/username/:email', verifyToken, verifyCustomer, async(req, res) =>{
+      const {username} = req.body;
+      const email = req.params.email;
+
+      const updateDoc = {
+        $set: {
+          name: username
+        }
+      }
+
+      const result = await usersCollection.updateOne({ email: email }, updateDoc)
+      
+    })
+
+    // send email (nodemailer make it at first) and add into a store who become a seller
+    app.post('/customer-to-seller/:email', verifyToken, verifyCustomer, async(req, res) => {
+      console.log(req.params.email);
+
+      const existApplication = await sellersCollection.findOne({ email: req.params.email });
+      if(existApplication){
+        return res.status(409).send({message: "Already applied!"});
+      }
+
+      const data = req.body;
+      data.seller = false;
+      const result = await sellersCollection.insertOne(data);
+      res.send(result)
+    });
+
     //-------------------------------blog related apis---------------------
 
     // blog api --- verifyToken + user type
-    app.get("/blog/:email", verifyToken, verifyCustomer, async (req, res) => {
+    app.get("/blog/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
       const decodedUser = req.user;
 
@@ -215,11 +324,6 @@ async function run() {
         .status(200)
         .send({ message: "this is blog, check if it working well or not!" });
     });
-
-
-
-
-
 
     app.get("/", (req, res) => {
       res.send({ Message: "everything ok!" });

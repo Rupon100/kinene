@@ -3,10 +3,12 @@ import { Link, NavLink } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
 import useAuth from "../AuthProvider/useAuth";
 import axios from "axios";
+import useRole from "../Hooks/useRole";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, loading, logOut } = useAuth();
+  const { role } = useRole();
 
   useEffect(() => {
     console.log(user);
@@ -118,7 +120,7 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <Link to={'/profile/customer'} className="justify-between">
+                  <Link to={`/profile/${role === "customer" ? "customer" : role === "seller" ? "seller" : "admin"}`} className="justify-between">
                     Profile 
                   </Link>
                 </li>

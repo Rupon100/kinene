@@ -14,8 +14,19 @@ import PrivateRoute from "./PrivateRoute";
 import CustomerProfile from "../Profile/CustomerProfile";
 import SellerProfile from "../Profile/SellerProfile";
 import AdminProfile from "../Profile/AdminProfile";
+import Dashboard from "../Layout/Dashboard";
+import SellerDashboard from "../Dashboard/SellerDashboard";
+import AdminDashboard from "../Dashboard/AdminDashboard";
+import CustomerDashboard from "../Dashboard/CustomerDashboard";
+import RoleRedirect from "../Common/RoleRedirect";
+import AddProducts from "../pages/DashboardPages/PagesSeller/AddProducts";
+import MyProducts from "../pages/DashboardPages/PagesSeller/MyProducts";
+import SellersOrders from "../pages/DashboardPages/PagesSeller/SellersOrders";
+import WhiteList from "../pages/DashboardPages/PagesCustomer/WhiteList";
+import PurchaseHistory from "../pages/DashboardPages/PagesCustomer/PurchaseHistory";
 
 export const router = createBrowserRouter([
+  // root layout
   {
     path: "/",
     element: <RootLayout></RootLayout>,
@@ -87,6 +98,89 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AdminProfile></AdminProfile>
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
+
+  // dashboard layout
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <Dashboard></Dashboard>
+      </PrivateRoute>
+    ),
+    children: [
+      // seller paths and children
+      {
+        path: "seller",
+        element: (
+          <PrivateRoute requiredRole="seller">
+            <SellerDashboard />
+          </PrivateRoute>
+        ),
+        children: [
+          {
+            path: "add-product",
+            element: (
+              <PrivateRoute requiredRole="seller">
+                <AddProducts></AddProducts>
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: "products",
+            element: (
+              <PrivateRoute requiredRole="seller">
+                 <MyProducts></MyProducts>
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: "orders",
+            element: (
+              <PrivateRoute requiredRole="seller">
+                <SellersOrders></SellersOrders>
+              </PrivateRoute>
+            ),
+          },
+        ],
+      },
+      // customer routes and paths
+      {
+        path: "customer",
+        element: (
+          <PrivateRoute requiredRole="customer">
+            <CustomerDashboard />
+          </PrivateRoute>
+        ),
+        children: [
+          {
+            path: 'white-list',
+            element: (
+              <PrivateRoute requiredRole="customer">
+                <WhiteList></WhiteList>
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: 'history',
+            element: (
+              <PrivateRoute requiredRole="customer">
+                 <PurchaseHistory></PurchaseHistory>
+              </PrivateRoute>
+            ),
+          }
+        ]
+      },
+      // admin all route
+      {
+        path: "admin",
+        element: (
+          <PrivateRoute requiredRole="admin">
+            <AdminDashboard />
           </PrivateRoute>
         ),
       },

@@ -8,6 +8,7 @@ const PrivateRoute = ({children, requiredRole}) => {
     const { role, loading: roleLoading } = useRole();
     const location = useLocation();
 
+    console.log("router role and user role: ", requiredRole, role);
     
     if(authLoading || roleLoading){
         return <h2>loading.....</h2>;
