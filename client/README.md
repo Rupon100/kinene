@@ -1,11 +1,8 @@
 # TO-DO
+
+// req to admin is ultimate sending email to admin
+
 - customer profile, 
-
----- get image(imgbb or any how) +++ demo beautiful image for by default
-
----- edit name, address 
-
-----  for apply seller sent email to admin -> store in db (for admin)
 
 ---- add to cart
 
@@ -37,16 +34,10 @@
 
 
 
-# make dashboard base on role
-
 ## too many api request(network) when enter in profile 
 
 # revision all at first
 
-- verify token for customer(1) + seller + admin
- 
-
-- *********************RBAC - (Role-Based Access Control)******************
 
 
 ##### profile dash cart

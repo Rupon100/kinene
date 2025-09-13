@@ -8,7 +8,7 @@ const multer = require("multer");
 const streamifier = require("streamifier");
 
 // import nodemailer email send
-const { sendWelcomeEmail } = require("./emailService");
+const { sendWelcomeEmail, WantSellerEmail } = require("./emailService");
 
 const app = express();
 
@@ -66,8 +66,9 @@ const verifyCustomer = (req, res, next) => {
 
 // verify seller
 const verifySeller = (req, res, next) => {
+  console.log(req.user)
   if (!req.user) return res.status(401).send({ message: "Unauthorized" });
-  if (req.user.role !== "seller" && req.user.role !== "admin") {
+  if (req.user.type !== "seller" && req.user.type !== "admin") {
     return res.status(403).send({ message: "Forbidden Access" });
   }
   next();
@@ -76,7 +77,7 @@ const verifySeller = (req, res, next) => {
 // verify Admin
 const verifyAdmin = (req, res, next) => {
   if (!req.user) return res.status(401).send({ message: "Unauthorized" });
-  if (req.user.role !== "admin")
+  if (req.user.type !== "admin")
     return res.status(403).send({ message: "Forbidden Access" });
 };
 
@@ -88,6 +89,7 @@ async function run() {
     // db and collection
     const usersCollection = client.db("Kinene").collection("users");
     const sellersCollection = client.db("Kinene").collection("sellers");
+    const productsCollection = client.db("Kinene").collection("products");
 
     //--------------------------------user auth------------------------------
     // make token for user auth
@@ -204,21 +206,26 @@ async function run() {
 
     //-------------------------------profile information edit--------------------
     // get a user information
-    app.get('/db-user/:email', verifyToken, async(req, res) => {
-      const result = await usersCollection.findOne({email: req.params.email});
+    app.get("/db-user/:email", verifyToken, async (req, res) => {
+      const result = await usersCollection.findOne({ email: req.params.email });
       res.send(result);
-    })
+    });
 
     // user address
-    app.put('/user/address/:email', verifyToken, verifyCustomer, async(req, res) => {
-      const email = { email: req.params.email };
-      const { address } = req.body;
-      const updateDoc = { 
-        $set: { address }
+    app.put(
+      "/user/address/:email",
+      verifyToken,
+      verifyCustomer,
+      async (req, res) => {
+        const email = { email: req.params.email };
+        const { address } = req.body;
+        const updateDoc = {
+          $set: { address },
+        };
+        const result = await usersCollection.updateOne(email, updateDoc);
+        res.send(result);
       }
-      const result = await usersCollection.updateOne(email, updateDoc);
-      res.send(result);
-    })
+    );
 
     // helper function must return a promise
     const uploadFormBuffer = (buffer) => {
@@ -253,7 +260,12 @@ async function run() {
           // save the URL in DB for later usage
           await usersCollection.updateOne(
             { email },
-            { $set: { profileImage: result.secure_url, profileImageId: result?.public_is } }
+            {
+              $set: {
+                profileImage: result.secure_url,
+                profileImageId: result?.public_is,
+              },
+            }
           );
 
           res.send(result);
@@ -266,41 +278,86 @@ async function run() {
     // patch for the profile
 
     // get the profile image
-    app.get('/users/:email', verifyToken, verifyCustomer, async(req, res) => {
+    app.get("/users/:email", verifyToken, verifyCustomer, async (req, res) => {
       const email = req.params.email;
       const user = await usersCollection.findOne({ email });
       res.send(user);
-    })
+    });
 
     // change profile username
-    app.patch('/profile/username/:email', verifyToken, verifyCustomer, async(req, res) =>{
-      const {username} = req.body;
-      const email = req.params.email;
+    app.patch(
+      "/profile/username/:email",
+      verifyToken,
+      verifyCustomer,
+      async (req, res) => {
+        const { username } = req.body;
+        const email = req.params.email;
 
-      const updateDoc = {
-        $set: {
-          name: username
-        }
+        const updateDoc = {
+          $set: {
+            name: username,
+          },
+        };
+
+        const result = await usersCollection.updateOne(
+          { email: email },
+          updateDoc
+        );
       }
-
-      const result = await usersCollection.updateOne({ email: email }, updateDoc)
-      
-    })
+    );
 
     // send email (nodemailer make it at first) and add into a store who become a seller
-    app.post('/customer-to-seller/:email', verifyToken, verifyCustomer, async(req, res) => {
-      console.log(req.params.email);
+    app.post(
+      "/customer-to-seller/:email",
+      verifyToken,
+      verifyCustomer,
+      async (req, res) => {
+        try {
+          console.log(req.params.email);
+          const email = req.params.email;
 
-      const existApplication = await sellersCollection.findOne({ email: req.params.email });
-      if(existApplication){
-        return res.status(409).send({message: "Already applied!"});
+          const existApplication = await sellersCollection.findOne({
+            email: req.params.email,
+          });
+          if (existApplication) {
+            return res.status(409).send({ message: "Already applied!" });
+          }
+
+          const data = req.body;
+          data.seller = false;
+          const result = await sellersCollection.insertOne(data);
+
+          try {
+            await WantSellerEmail(
+              process.env.EMAIL_USER,
+              email,
+              data?.store_name,
+              data.mobile_number,
+              data?.location,
+              data?.letter
+            );
+          } catch (emailErr) {
+            console.log(emailErr.message);
+          }
+
+          res.send(result);
+        } catch (err) {
+          console.log({ message: "cant send message something wrong!" });
+        }
       }
+    );
 
-      const data = req.body;
-      data.seller = false;
-      const result = await sellersCollection.insertOne(data);
-      res.send(result)
-    });
+    // ---------------------------- seller dashboard ------------------------------
+    // add a product to db
+    app.post('/add-products', verifyToken, verifySeller, async(req, res) => {
+      // const { email, name, stock, price, category, details, images } = req.body; 
+      const urlImg = [];
+      
+      // get this images and make a loop on the image array for get the cloudinary image url then save those data into productsCollections
+
+      // console.log(images);
+      
+    })
 
     //-------------------------------blog related apis---------------------
 

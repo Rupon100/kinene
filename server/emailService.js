@@ -42,11 +42,10 @@ const sendWelcomeEmail = (to) => {
 };
 
 // send email to admin for become a seller
-const WantSellerEmail = (to, customerName, customerEmail, storeName, mobile, location, message ) => {
+const WantSellerEmail = (to, customerEmail, storeName, mobile, location, message ) => {
   const body = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
       <h2>New Seller Request!!</h2>
-      <p><strong>Customer Name:</strong> ${customerName}</p>
       <p><strong>Customer Email:</strong> ${customerEmail}</p>
       <p><strong>Store Name:</strong> ${storeName}</p>
       <p><strong>Mobile:</strong> ${mobile}</p>
@@ -60,11 +59,11 @@ const WantSellerEmail = (to, customerName, customerEmail, storeName, mobile, loc
 }
 
 // add this email to server code the fardiislamrupon@gmial.com is middle man like send user and send to admin to(ruponmia@gmail.com)
-WantSellerEmail("ruponmia97@gmail.com", "sidka", "sidkaalex@gmail.com", "Kannu", "01992992", "Moholgiri", "please approve me to become a seller");
+// WantSellerEmail("ruponmia97@gmail.com", "sidka", "sidkaalex@gmail.com", "Kannu", "01992992", "Moholgiri", "please approve me to become a seller");
 
 // product purchase
 
 
 // sendWelcomeEmail("sidlex@gmail.com");
 // export { sendWelcomeEmail };
-module.exports = { sendWelcomeEmail };
+module.exports = { sendWelcomeEmail, WantSellerEmail };
