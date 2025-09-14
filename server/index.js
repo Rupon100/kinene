@@ -66,7 +66,7 @@ const verifyCustomer = (req, res, next) => {
 
 // verify seller
 const verifySeller = (req, res, next) => {
-  console.log(req.user)
+  console.log(req.user);
   if (!req.user) return res.status(401).send({ message: "Unauthorized" });
   if (req.user.type !== "seller" && req.user.type !== "admin") {
     return res.status(403).send({ message: "Forbidden Access" });
@@ -349,15 +349,49 @@ async function run() {
 
     // ---------------------------- seller dashboard ------------------------------
     // add a product to db
-    app.post('/add-products', verifyToken, verifySeller, async(req, res) => {
-      // const { email, name, stock, price, category, details, images } = req.body; 
-      const urlImg = [];
-      
-      // get this images and make a loop on the image array for get the cloudinary image url then save those data into productsCollections
+    app.post(
+      "/add-products",
+      verifyToken,
+      verifySeller,
+      upload.array("images", 3), // max 3 images
+      async (req, res) => {
+        try {
+          const { email, name, stock, price, category, details } = req.body;
+          const files = req.files; // multer parses files
+          const urlImg = [];
 
-      // console.log(images);
-      
-    })
+          // loop over files and upload each one
+          for (const file of files) {
+            const result = await uploadFormBuffer(file.buffer);
+            urlImg.push(result.secure_url); // store Cloudinary URL
+          }
+
+          // make new product object
+          const newProduct = {
+            email,
+            name,
+            stock: Number(stock),
+            price: Number(price),
+            category,
+            details,
+            images: urlImg, // array of Cloudinary URLs
+            createdAt: new Date(),
+          };
+
+          console.log(newProduct)
+
+          // insert into db
+          const insertResult = await productsCollection.insertOne(newProduct);
+
+          res.send(insertResult);
+        } catch (err) {
+          console.error("Error adding product:", err.message);
+          res
+            .status(500)
+            .send({ success: false, message: "Failed to add product!" });
+        }
+      }
+    );
 
     //-------------------------------blog related apis---------------------
 

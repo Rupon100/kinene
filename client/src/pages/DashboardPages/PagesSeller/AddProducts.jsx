@@ -3,11 +3,12 @@ import useAuth from "../../../AuthProvider/useAuth";
 import useAxiosSecure from "../../../Services/useAxiosSecure";
 
 const AddProducts = () => {
-    const { user } = useAuth();
-    const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const [images, setImages] = useState([]);
+  const [addLoading, setAddLoading] = useState(false);
 
-  console.log(images)
+  console.log(images);
 
   // Handle image upload (max 3)
   const handleImageChange = (e) => {
@@ -20,7 +21,7 @@ const AddProducts = () => {
   };
 
   // Submit form
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
@@ -30,38 +31,35 @@ const AddProducts = () => {
     const details = form.details.value;
 
     const formData = new FormData();
- 
 
-  formData.append("email", user?.email);
-  formData.append("name", name);
-  formData.append("stock", stock);
-  formData.append("price", price);
-  formData.append("category", category);
-  formData.append("details", details);
+    formData.append("email", user?.email);
+    formData.append("name", name);
+    formData.append("stock", stock);
+    formData.append("price", price);
+    formData.append("category", category);
+    formData.append("details", details);
 
-
- 
- 
-  // append files
-  images.forEach((img) => {
-    formData.append("images", img);
-  });
-
+    // append files
+    images.forEach((img) => {
+      formData.append("images", img);
+    });
 
     console.log([...formData.entries()]);
 
-    try{
-        const res = await axiosSecure.post('/add-products', formData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        });
-        console.log(res.data)
-    }catch(err){
-        console.log("Error for add products: ", err.message);
+    setAddLoading(true);
+    try {
+      const res = await axiosSecure.post("/add-products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res.data);
+    } catch (err) {
+      console.log("Error for add products: ", err.message);
+    }finally{
+      form.reset();
+      setAddLoading(false)
     }
-
-   
   };
 
   return (
@@ -115,7 +113,9 @@ const AddProducts = () => {
 
         {/* Details */}
         <div>
-          <label className="block text-sm font-medium mb-1">Product Details</label>
+          <label className="block text-sm font-medium mb-1">
+            Product Details
+          </label>
           <textarea
             name="details"
             rows="4"
@@ -126,7 +126,9 @@ const AddProducts = () => {
 
         {/* Image Upload */}
         <div>
-          <label className="block text-sm font-medium mb-1">Upload Images (Max 3)</label>
+          <label className="block text-sm font-medium mb-1">
+            Upload Images (Max 3)
+          </label>
           <input
             type="file"
             accept="image/*"
@@ -149,10 +151,15 @@ const AddProducts = () => {
 
         {/* Submit */}
         <button
+          disabled={addLoading}
           type="submit"
-          className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+          className={`w-full py-2 rounded-lg font-medium transition 
+    ${addLoading 
+      ? "bg-blue-400 cursor-not-allowed" 
+      : "bg-blue-600 hover:bg-blue-700 cursor-pointer text-white"
+    }`}
         >
-          Add Product
+          {addLoading ? "adding.." : "Add Product"}
         </button>
       </form>
     </div>
