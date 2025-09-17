@@ -56,7 +56,7 @@ const SellerProfile = () => {
  
             <Link  
             className='btn btn-accent'
-            to={'/dashboard/seller'} 
+            to={'/dashboard/seller/products'} 
             >Dashboard</Link>
        
       </div>

@@ -393,6 +393,13 @@ async function run() {
       }
     );
 
+    // get all products collections of user
+    app.get('/products/:email', verifyToken, verifySeller, async(req, res) => {
+      const email = req.params.email;
+      const result = await productsCollection.find({ email: email }).toArray();
+      res.send(result)
+    })
+
     //-------------------------------blog related apis---------------------
 
     // blog api --- verifyToken + user type

@@ -54,6 +54,9 @@ const AddProducts = () => {
         },
       });
       console.log(res.data);
+      if(res.data.insertedId){
+        console.log("added to db");
+      }
     } catch (err) {
       console.log("Error for add products: ", err.message);
     }finally{
