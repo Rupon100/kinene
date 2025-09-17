@@ -1,6 +1,9 @@
 # TO-DO
-
 // req to admin is ultimate sending email to admin
+
+
+
+\\\\ simple design category-wise in home -> show all data in shop ->  filter mongodb aggregration(pagination) -> ----Customer------ -> after finish the project practice another project until verify token and setup
 
 - customer profile, 
 
@@ -8,7 +11,7 @@
 
 ---- show everything in cart list like
 
----- add if have discount
+---- add if have discount*(seller control)
 
 ---- checkOut button
 
@@ -18,20 +21,9 @@
 
 - seller nothing just show information of his business and image and shop location
 
----- then move to post product and everything
-
----- and show those in seller dashboard
-
----- add delete edit option in stock or not 
-
 ---- ordered for specific product and amount + can set coupon for product
 
----- show every product list and progress
-
----- if product is out of stock show out Of stock
-
----- make pagination for table(dashboard) + product 
-
+ 
 
 
 ## too many api request(network) when enter in profile 

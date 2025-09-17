@@ -35,6 +35,7 @@ const MyProducts = () => {
                 <th>Stock</th>
                 <th>Details</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -46,7 +47,8 @@ const MyProducts = () => {
                   <td>{product?.price}</td>
                   <td>{product?.stock}</td>
                   <td>{product?.details}</td>
-                  <td><button className="btn btn-accent" >{product?.details && 'Active'}</button></td>
+                  <td><button className="btn btn-sm btn-accent" >{product?.details && 'Active'}</button></td>
+                    <td><button className="btn btn-sm btn-warning" >Delete</button></td>
                 </tr>
               ))}
             </tbody>

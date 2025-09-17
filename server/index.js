@@ -306,7 +306,7 @@ async function run() {
       }
     );
 
-    // send email (nodemailer make it at first) and add into a store who become a seller
+    // Customer-to-Seller | send email (nodemailer make it at first) and add into a store who become a seller
     app.post(
       "/customer-to-seller/:email",
       verifyToken,

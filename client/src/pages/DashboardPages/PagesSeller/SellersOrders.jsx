@@ -2,8 +2,11 @@ import React from 'react';
 
 const SellersOrders = () => {
     return (
-        <div>
-            all orders list here with details and crud
+        <div className='space-y-4' >
+            <h2 className="text-xl md:text-2xl">Orders</h2>
+            <div>
+                No Orders Placed Yet!
+            </div>
         </div>
     );
 };
