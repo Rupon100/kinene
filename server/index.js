@@ -356,7 +356,7 @@ async function run() {
       upload.array("images", 3), // max 3 images
       async (req, res) => {
         try {
-          const { email, name, stock, price, category, details } = req.body;
+          const { email, name, stock, price, category, details, status } = req.body;
           const files = req.files; // multer parses files
           const urlImg = [];
 
@@ -376,6 +376,7 @@ async function run() {
             details,
             images: urlImg, // array of Cloudinary URLs
             createdAt: new Date(),
+            status
           };
 
           console.log(newProduct)
@@ -405,6 +406,19 @@ async function run() {
       const id = req.params.id;
       console.log(id);
       const result = await productsCollection.deleteOne({_id: new ObjectId(id)});
+      res.send(result);
+    });
+
+    // product inactive/active toggle
+    app.patch("/product/:id", verifyToken, verifySeller, async(req, res) => {
+      const id = { _id: new ObjectId(req.params.id) };
+      const { status } = req.body;
+     
+      const updateDoc = {
+        $set: { status }
+      };
+
+      const result = await productsCollection.updateOne(id, updateDoc);
       res.send(result);
     })
 

@@ -35,7 +35,21 @@ const MyProducts = () => {
     }finally{
       setDeleteLoading(false);
     }
+  }
 
+  // active or inactive product
+  const toggleStatus = async(id, currentStatus) => {
+    console.log(id, currentStatus);
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    try{
+      const res = await axiosSecure.patch(`/product/${id}`, {status: newStatus});
+      if(res.data.modifiedCount > 0){
+        refetch();
+        console.log(res.data);
+      }
+    }catch(err){
+      console.log("Seller product status update error: ", err.message);
+    }
   }
 
   // every product should contain a review after details in home page
@@ -67,7 +81,9 @@ const MyProducts = () => {
                   <td>{product?.price}</td>
                   <td>{product?.stock}</td>
                   <td>{product?.details}</td>
-                  <td><button className="btn btn-sm btn-accent" >{product?.details && 'Active'}</button></td>
+                  <td>
+                    <button onClick={() => toggleStatus(product?._id, product?.status)} className={` ${product?.status == "active" ? "btn btn-sm btn-accent" : "btn btn-sm"}`} >{product?.status || "inactive"}</button>
+                  </td>
                     <td>
                       {
                         deleteLoading 

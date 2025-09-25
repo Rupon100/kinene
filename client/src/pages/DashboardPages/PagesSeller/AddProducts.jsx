@@ -38,6 +38,7 @@ const AddProducts = () => {
     formData.append("price", price);
     formData.append("category", category);
     formData.append("details", details);
+    formData.append("status", "active");
 
     // append files
     images.forEach((img) => {
@@ -54,14 +55,14 @@ const AddProducts = () => {
         },
       });
       console.log(res.data);
-      if(res.data.insertedId){
+      if (res.data.insertedId) {
         console.log("added to db");
       }
     } catch (err) {
       console.log("Error for add products: ", err.message);
-    }finally{
+    } finally {
       form.reset();
-      setAddLoading(false)
+      setAddLoading(false);
     }
   };
 
@@ -157,9 +158,10 @@ const AddProducts = () => {
           disabled={addLoading}
           type="submit"
           className={`w-full py-2 rounded-lg font-medium transition 
-    ${addLoading 
-      ? "bg-blue-400 cursor-not-allowed" 
-      : "bg-blue-600 hover:bg-blue-700 cursor-pointer text-white"
+    ${
+      addLoading
+        ? "bg-blue-400 cursor-not-allowed"
+        : "bg-blue-600 hover:bg-blue-700 cursor-pointer text-white"
     }`}
         >
           {addLoading ? "adding.." : "Add Product"}
