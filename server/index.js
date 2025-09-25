@@ -30,7 +30,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 //------------------------------mongodb-------------------------
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nnefkr8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri, {
@@ -398,6 +398,14 @@ async function run() {
       const email = req.params.email;
       const result = await productsCollection.find({ email: email }).toArray();
       res.send(result)
+    })
+
+    // delete product from my product
+    app.delete('/product/delete/:id', verifyToken, verifySeller, async(req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const result = await productsCollection.deleteOne({_id: new ObjectId(id)});
+      res.send(result);
     })
 
     //-------------------------------blog related apis---------------------

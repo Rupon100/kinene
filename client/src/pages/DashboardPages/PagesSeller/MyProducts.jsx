@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Services/useAxiosSecure";
 import useAuth from "../../../AuthProvider/useAuth";
 import { Link } from "react-router";
 
 const MyProducts = () => {
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
-  const { data: products, isLoading } = useQuery({
+  const { data: products, isLoading, refetch } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const res = await axiosSecure.get(`/products/${user?.email}`);
@@ -18,6 +19,25 @@ const MyProducts = () => {
   if(isLoading){
     return <div> products loading... </div>
   }
+
+  // delete product
+  const deleteProduct = async (id) => {
+    setDeleteLoading(true);
+    try {
+      const res = await axiosSecure.delete(`/product/delete/${id}`);
+      console.log(res.data)
+      if(res.data?.deletedCount > 0){
+        refetch();
+        console.log("Deleted Successfully!");
+      }
+    }catch(err){
+      console.log(err.message);
+    }finally{
+      setDeleteLoading(false);
+    }
+
+  }
+
   // every product should contain a review after details in home page
   return (
     <div className="space-y-4">
@@ -48,7 +68,21 @@ const MyProducts = () => {
                   <td>{product?.stock}</td>
                   <td>{product?.details}</td>
                   <td><button className="btn btn-sm btn-accent" >{product?.details && 'Active'}</button></td>
-                    <td><button className="btn btn-sm btn-warning" >Delete</button></td>
+                    <td>
+                      {
+                        deleteLoading 
+                        ? (
+                          <button className="btn btn-sm btn-warning">
+                            <span className="loading loading-sm loading-spinner"></span>
+                            deleting..
+                          </button>
+                        ) :
+                        (
+                          <button onClick={() => deleteProduct(product._id)} className="btn btn-sm btn-warning" >Delete</button>
+
+                        )
+                      }
+                    </td>
                 </tr>
               ))}
             </tbody>
