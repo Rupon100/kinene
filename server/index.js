@@ -449,6 +449,13 @@ async function run() {
       res.send({ Message: "everything ok!" });
     });
 
+
+    //-----------------------------------all products for all---------------------------
+    app.get('/products', verifyToken, async(req, res) => {
+      const result = await productsCollection.find().toArray();
+      res.send(result);
+    })
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
