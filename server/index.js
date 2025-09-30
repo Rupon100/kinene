@@ -456,6 +456,13 @@ async function run() {
       res.send(result);
     })
 
+    // product details
+    app.get('/details/:id', verifyToken, async(req, res) => {
+      const id = { _id: new ObjectId(req.params.id) };
+      const result = await productsCollection.findOne(id);
+      res.send(result);
+    })
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );

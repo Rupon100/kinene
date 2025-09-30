@@ -24,6 +24,7 @@ import MyProducts from "../pages/DashboardPages/PagesSeller/MyProducts";
 import SellersOrders from "../pages/DashboardPages/PagesSeller/SellersOrders";
 import WhiteList from "../pages/DashboardPages/PagesCustomer/WhiteList";
 import PurchaseHistory from "../pages/DashboardPages/PagesCustomer/PurchaseHistory";
+import ProductDetails from "../Common/ProductDetails";
 
 export const router = createBrowserRouter([
   // root layout
@@ -97,6 +98,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AdminProfile></AdminProfile>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/details/:id",
+        element: (
+          <PrivateRoute>
+            <ProductDetails></ProductDetails>
           </PrivateRoute>
         ),
       },

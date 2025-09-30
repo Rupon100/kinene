@@ -1,10 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-const SingleProduct = ({product}) => {
-    const { _id, category, details, email, images, name, price, status, stock, createdAt } = product;
-    return (
-        <div className="border rounded-xl shadow-md hover:shadow-lg p-4 transition duration-300 bg-white mx-4">
+const SingleProduct = ({ product }) => {
+  const {
+    _id,
+    category,
+    details,
+    email,
+    images,
+    name,
+    price,
+    status,
+    stock,
+    createdAt,
+  } = product;
+  return (
+    <div className="border rounded-xl shadow-md hover:shadow-lg p-4 my-4 transition duration-300 bg-white mx-4">
       {/* Product Image */}
       <div className="w-full h-48 overflow-hidden rounded-lg mb-4">
         <img
@@ -20,7 +31,11 @@ const SingleProduct = ({product}) => {
         <p className="text-sm text-gray-500">Category: {category}</p>
         <p className="text-sm text-gray-600 line-clamp-2">{details}</p>
         <p className="font-medium text-orange-600">${price}</p>
-        <p className={`text-sm ${status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+        <p
+          className={`text-sm ${
+            status === "active" ? "text-green-600" : "text-red-600"
+          }`}
+        >
           {status} - {stock} in stock
         </p>
       </div>
@@ -35,7 +50,7 @@ const SingleProduct = ({product}) => {
         </Link>
       </div>
     </div>
-    );
+  );
 };
 
 export default SingleProduct;

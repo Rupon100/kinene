@@ -8,7 +8,7 @@ const MyProducts = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
-  const { data: products, isLoading, refetch } = useQuery({
+  const { data: products = [], isLoading, refetch } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const res = await axiosSecure.get(`/products/${user?.email}`);
